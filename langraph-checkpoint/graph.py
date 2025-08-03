@@ -39,7 +39,7 @@ class State(TypedDict):
 
 # Node function
 def chatbot(state: State) -> State:
-    response = llm.invoke(state["messages"])
+    response = llm_with_tools.invoke(state["messages"])
     return {"messages": state["messages"] + [response]}
 
 tool_node = ToolNode(tools=tools)

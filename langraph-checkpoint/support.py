@@ -7,7 +7,7 @@ from langgraph.checkpoint.mongodb import MongoDBSaver
 
 load_dotenv()
 MONGODB_URI = "mongodb://localhost:27017"
-config = {"configurable": {"thread_id": "57"}}
+config = {"configurable": {"thread_id": "56"}}
 
 
 def init():
@@ -26,11 +26,16 @@ def init():
         for call in tool_calls:
             if call.get("function", {}).get("name") == "human_assistance_tool":
                 args = call["function"].get("arguments", "{}")
-                try:
-                    args_dict = json.loads(args)
-                    user_query = args_dict.get("query")
-                except json.JSONDecodeError:
-                    print("Failed to decode function arguments.")
+                if isinstance(args, str):
+                    try:
+                        args_dict = json.loads(args)
+                        user_query = args_dict.get("query")
+                    except json.JSONDecodeError:
+                        print("Failed to decode function arguments.")
+                else:
+                    args_dict = args
+                    
+                user_query = args_dict.get("query")
         
         print("User is Tying to Ask:", user_query)
         ans = input("Resolution > ")
